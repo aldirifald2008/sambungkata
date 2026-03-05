@@ -10,6 +10,79 @@
     <title>WordFinder Ultra Pro | Multi-Engine</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
     <style>
+/* Container Utama */
+.container {
+    width: 95%;
+    max-width: 500px; /* Lebih ramping untuk Mobile/Popup */
+    height: 92vh; /* Membatasi tinggi agar tidak off-screen */
+    background: var(--glass);
+    backdrop-filter: blur(40px) saturate(180%);
+    border: 1px solid var(--border);
+    border-radius: 32px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column; /* Susunan vertikal */
+    overflow: hidden;
+}
+
+/* List Hasil - KUNCI UTAMA */
+.list-container {
+    flex: 1; /* Mengambil semua sisa ruang yang tersedia */
+    min-height: 100px; /* Jaminan hasil tetap terlihat meski keyboard besar */
+    overflow-y: auto;
+    border-radius: 20px;
+    background: rgba(0,0,0,0.2);
+    border: 1px solid var(--border);
+    padding: 10px;
+    margin-bottom: 12px;
+}
+
+/* Keyboard Virtual yang Lebih Padat */
+.virtual-keyboard {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr); /* 7 kolom agar tombol tidak terlalu lebar */
+    gap: 6px;
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 20px;
+    border: 1px solid var(--border);
+}
+
+.key-btn {
+    padding: 10px 0; /* Lebih pendek agar hemat ruang */
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: rgba(255, 255, 255, 0.05);
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 13px;
+    text-transform: uppercase;
+}
+
+.key-btn.danger {
+    grid-column: span 2; /* Tombol DEL sedikit lebih lebar */
+    background: rgba(255, 75, 43, 0.15);
+    color: #ff4b2b;
+}
+
+/* Optimasi Layar Pendek (Popup) */
+@media (max-height: 650px) {
+    h1 { font-size: 1.5rem; }
+    .status-badge, .footer { display: none; } /* Sembunyikan elemen dekoratif */
+    .container { padding: 15px; }
+    .key-btn { padding: 8px 0; font-size: 11px; }
+}
+
+
+/* Penyesuaian untuk layar sangat kecil (Popup) */
+@media (max-height: 600px) {
+    h1 { font-size: 1.8rem; }
+    .container { padding: 20px; }
+    .virtual-keyboard { gap: 4px; padding: 5px; }
+    .key-btn { padding: 8px 0; font-size: 12px; }
+}
+
     /* Mencegah zoom otomatis saat klik input */
 input {
     font-size: 16px !important; /* Minimal 16px agar browser tidak zoom */
@@ -237,7 +310,8 @@ html, body {
             </div>
         </ul>
     </div>
-
+<div class="virtual-keyboard" id="keyboard">
+    </div>
     <div class="footer">ULTRA-FAST SEARCH ENGINE • 5-STREAM DATABASE</div>
 </div>
 
@@ -378,6 +452,53 @@ if ('serviceWorker' in navigator) {
     .then(() => console.log("PWA Ready!"))
     .catch(err => console.log("SW Error:", err));
 }
+const keyboard = document.getElementById('keyboard');
+const inputPola = document.getElementById('pola');
+
+// Bersihkan keyboard sebelum render
+keyboard.innerHTML = '';
+
+// Susunan tombol A-Z
+const alphabet = 'abcdefghijklmnopqrstuvwxyz'.split('');
+alphabet.forEach(key => {
+    const btn = document.createElement('button');
+    btn.className = 'key-btn';
+    btn.innerText = key;
+    btn.onclick = () => addChar(key);
+    keyboard.appendChild(btn);
+});
+
+// Tombol Spesial
+const extras = [
+    { label: '_', val: '_', class: 'special' },
+    { label: '=', val: '=', class: 'special' },
+    { label: '⌫', val: 'DEL', class: 'danger' } // Pakai simbol backspace
+];
+
+extras.forEach(k => {
+    const btn = document.createElement('button');
+    btn.className = `key-btn ${k.class}`;
+    btn.innerText = k.label;
+    btn.onclick = () => (k.val === 'DEL') ? delChar() : addChar(k.val);
+    keyboard.appendChild(btn);
+});
+
+function addChar(char) {
+    inputPola.value += char;
+    vibrateDevice();
+    search(); // Langsung trigger search
+}
+
+function delChar() {
+    inputPola.value = inputPola.value.slice(0, -1);
+    vibrateDevice();
+    search();
+}
+
+// Matikan keyboard fisik di mobile agar tidak bentrok
+inputPola.setAttribute('inputmode', 'none');
+ 
+inputPola.onclick = () => inputPola.focus();
 
 </script>
 
