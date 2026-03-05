@@ -1,133 +1,38 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#020617">
-<link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/2800/2800015.png">
-
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#020617">
+    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/2800/2800015.png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>WordFinder Ultra Pro | Multi-Engine</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
     <style>
-/* Container Utama */
-.container {
-    width: 95%;
-    max-width: 500px; /* Lebih ramping untuk Mobile/Popup */
-    height: 92vh; /* Membatasi tinggi agar tidak off-screen */
-    background: var(--glass);
-    backdrop-filter: blur(40px) saturate(180%);
-    border: 1px solid var(--border);
-    border-radius: 32px;
-    padding: 20px;
-    display: flex;
-    flex-direction: column; /* Susunan vertikal */
-    overflow: hidden;
-}
-
-/* List Hasil - KUNCI UTAMA */
-.list-container {
-    flex: 1; /* Mengambil semua sisa ruang yang tersedia */
-    min-height: 100px; /* Jaminan hasil tetap terlihat meski keyboard besar */
-    overflow-y: auto;
-    border-radius: 20px;
-    background: rgba(0,0,0,0.2);
-    border: 1px solid var(--border);
-    padding: 10px;
-    margin-bottom: 12px;
-}
-
-/* Keyboard Virtual yang Lebih Padat */
-.virtual-keyboard {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr); /* 7 kolom agar tombol tidak terlalu lebar */
-    gap: 6px;
-    padding: 10px;
-    background: rgba(255, 255, 255, 0.03);
-    border-radius: 20px;
-    border: 1px solid var(--border);
-}
-
-.key-btn {
-    padding: 10px 0; /* Lebih pendek agar hemat ruang */
-    border-radius: 10px;
-    border: 1px solid var(--border);
-    background: rgba(255, 255, 255, 0.05);
-    color: white;
-    font-weight: 600;
-    cursor: pointer;
-    font-size: 13px;
-    text-transform: uppercase;
-}
-
-.key-btn.danger {
-    grid-column: span 2; /* Tombol DEL sedikit lebih lebar */
-    background: rgba(255, 75, 43, 0.15);
-    color: #ff4b2b;
-}
-
-/* Optimasi Layar Pendek (Popup) */
-@media (max-height: 650px) {
-    h1 { font-size: 1.5rem; }
-    .status-badge, .footer { display: none; } /* Sembunyikan elemen dekoratif */
-    .container { padding: 15px; }
-    .key-btn { padding: 8px 0; font-size: 11px; }
-}
-
-
-/* Penyesuaian untuk layar sangat kecil (Popup) */
-@media (max-height: 600px) {
-    h1 { font-size: 1.8rem; }
-    .container { padding: 20px; }
-    .virtual-keyboard { gap: 4px; padding: 5px; }
-    .key-btn { padding: 8px 0; font-size: 12px; }
-}
-
-    /* Mencegah zoom otomatis saat klik input */
-input {
-    font-size: 16px !important; /* Minimal 16px agar browser tidak zoom */
-}
-
-/* Menstabilkan layar agar tidak goyang ke kanan-kiri */
-html, body {
-    position: fixed;
-    overflow: hidden;
-    width: 100%;
-    height: 100%;
-    /* Mencegah 'bounce effect' di beberapa browser */
-    overscroll-behavior: none; 
-}
-
-/* Pastikan container utama bisa discroll secara internal saja */
-.container {
-    touch-action: pan-y; /* Hanya izinkan scroll atas bawah */
-}
-
         :root {
             --primary: #00f2fe;
             --secondary: #4facfe;
             --accent: #f093fb;
             --danger: #ff4b2b;
             --success: #00ff88;
-            --glass: rgba(15, 23, 42, 0.85);
+            --glass: rgba(15, 23, 42, 0.9);
             --border: rgba(255, 255, 255, 0.1);
         }
 
         * { box-sizing: border-box; -webkit-font-smoothing: antialiased; }
 
-        body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            margin: 0;
-            height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: #020617;
-            color: #f8fafc;
+        html, body {
+            position: fixed;
             overflow: hidden;
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            background: #020617;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            color: #f8fafc;
+            overscroll-behavior: none;
         }
 
-        /* Animated Background Mesh */
         .bg-mesh {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -140,140 +45,106 @@ html, body {
 
         .container {
             width: 95%;
-            max-width: 700px;
+            max-width: 500px;
+            height: 96vh;
+            margin: 2vh auto;
             background: var(--glass);
             backdrop-filter: blur(40px) saturate(180%);
             border: 1px solid var(--border);
-            border-radius: 32px;
-            padding: 40px;
-            box-shadow: 0 50px 100px -20px rgba(0,0,0,0.7);
-            animation: fadeIn 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+            border-radius: 28px;
+            padding: 20px;
             display: flex;
             flex-direction: column;
-            max-height: 90vh;
+            box-shadow: 0 40px 80px -20px rgba(0,0,0,0.8);
+            animation: fadeIn 0.5s ease-out;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        header { text-align: center; margin-bottom: 25px; }
-        
-        h1 {
-            font-weight: 800;
-            font-size: 2.8rem;
-            margin: 0;
-            background: linear-gradient(135deg, var(--primary), var(--secondary), var(--accent));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            letter-spacing: -1.5px;
-        }
+        header { text-align: center; margin-bottom: 15px; flex-shrink: 0; }
+        h1 { font-weight: 800; font-size: 2.2rem; margin: 0; background: linear-gradient(135deg, var(--primary), var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 
-        .status-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            background: rgba(255,255,255,0.03);
-            padding: 6px 16px;
-            border-radius: 100px;
-            font-size: 12px;
-            border: 1px solid var(--border);
-            margin-top: 10px;
-        }
+        .status-badge { display: inline-flex; align-items: center; gap: 6px; background: rgba(255,255,255,0.03); padding: 4px 12px; border-radius: 100px; font-size: 11px; border: 1px solid var(--border); margin-top: 8px; }
+        .loading-dot { height: 6px; width: 6px; background: var(--success); border-radius: 50%; box-shadow: 0 0 8px var(--success); animation: blink 1s infinite; }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
 
-        .search-area { position: relative; margin-bottom: 20px; }
-
+        .search-area { position: relative; margin-bottom: 12px; flex-shrink: 0; }
         input {
             width: 100%;
-            padding: 20px 25px 20px 60px;
+            padding: 15px 20px 15px 50px;
             background: rgba(0,0,0,0.3);
             border: 2px solid var(--border);
-            border-radius: 24px;
+            border-radius: 18px;
             color: white;
-            font-size: 18px;
-            transition: 0.3s all;
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+            font-size: 16px;
+            transition: 0.3s;
         }
-
-        input:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 30px rgba(0, 242, 254, 0.15);
-            background: rgba(0,0,0,0.5);
-        }
-
-        .search-icon {
-            position: absolute;
-            left: 25px;
-            top: 50%;
-            transform: translateY(-50%);
-            font-size: 20px;
-            filter: grayscale(1) brightness(2);
-        }
-
-        .stats-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0 5px;
-            font-size: 13px;
-            color: #94a3b8;
-            margin-bottom: 12px;
-        }
-
-        #counter-text b { color: var(--primary); }
+        input:focus { outline: none; border-color: var(--primary); background: rgba(0,0,0,0.5); }
+        .search-icon { position: absolute; left: 18px; top: 50%; transform: translateY(-50%); opacity: 0.5; }
 
         .list-container {
             flex: 1;
             overflow-y: auto;
-            border-radius: 20px;
+            border-radius: 18px;
             background: rgba(0,0,0,0.2);
             border: 1px solid var(--border);
             padding: 10px;
+            margin-bottom: 12px;
+            touch-action: pan-y;
         }
 
         ul { list-style: none; padding: 0; margin: 0; }
-
         li {
-            padding: 16px 20px;
-            margin-bottom: 8px;
+            padding: 12px 15px;
+            margin-bottom: 6px;
             background: rgba(255,255,255,0.03);
-            border-radius: 15px;
+            border-radius: 12px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            transition: 0.2s;
             border: 1px solid transparent;
         }
+        li:active { background: rgba(255,255,255,0.1); transform: scale(0.98); }
+        .word-text { font-weight: 600; font-size: 1rem; color: #fff; }
+        .word-len { font-size: 9px; color: var(--accent); font-weight: 800; border: 1px solid var(--accent); padding: 1px 5px; border-radius: 4px; }
 
-        li:hover {
-            background: rgba(255,255,255,0.07);
-            border-color: var(--primary);
-            transform: scale(1.01);
+        .virtual-keyboard {
+            display: grid;
+            grid-template-columns: repeat(10, 1fr);
+            gap: 4px;
+            padding: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 18px;
+            flex-shrink: 0;
         }
 
-        .word-text { font-weight: 600; font-size: 1.1rem; color: #fff; }
-        .word-len { font-size: 10px; color: var(--accent); font-weight: 800; border: 1px solid var(--accent); padding: 2px 6px; border-radius: 4px; }
-
-        /* Progress Bar */
-        #progress-container {
-            width: 100%; height: 4px; background: rgba(255,255,255,0.05); border-radius: 10px; margin-top: 10px; display: none;
+        .key-btn {
+            padding: 12px 0;
+            border-radius: 8px;
+            border: none;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-weight: 700;
+            font-size: 12px;
+            cursor: pointer;
+            text-transform: uppercase;
         }
-        #progress-bar { width: 0%; height: 100%; background: var(--primary); border-radius: 10px; transition: 0.3s; }
+        .key-btn:active { background: var(--primary); color: #000; transform: scale(0.9); }
+        .key-btn.special { background: rgba(240, 147, 251, 0.2); color: var(--accent); }
+        .key-btn.danger { background: rgba(255, 75, 43, 0.2); color: #ff4b2b; grid-column: span 2; }
 
-        /* Custom Scrollbar */
-        .list-container::-webkit-scrollbar { width: 5px; }
-        .list-container::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
+        .stats-row { display: flex; justify-content: space-between; font-size: 11px; color: #94a3b8; margin-bottom: 8px; padding: 0 5px; }
+        .footer { font-size: 9px; text-align: center; margin-top: 10px; opacity: 0.3; letter-spacing: 1px; }
 
-        .empty-state { text-align: center; padding: 60px 20px; color: #475569; }
-        .footer { margin-top: 20px; font-size: 10px; text-align: center; opacity: 0.4; letter-spacing: 2px; }
-
-        .loading-dot {
-            height: 8px; width: 8px; background: var(--success); border-radius: 50%; display: inline-block;
-            box-shadow: 0 0 10px var(--success); animation: blink 1s infinite;
+        /* Media Query Khusus Layar Popup (Pendek) */
+        @media (max-height: 550px) {
+            .container { padding: 12px; height: 98vh; margin: 1vh auto; }
+            h1 { font-size: 1.4rem; }
+            .status-badge, .footer, .stats-row { display: none !important; }
+            .search-area { margin-bottom: 8px; }
+            input { padding: 10px 10px 10px 40px; font-size: 14px; }
+            .key-btn { padding: 8px 0; font-size: 11px; }
         }
-        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
     </style>
 </head>
 <body>
@@ -282,37 +153,33 @@ html, body {
 
 <div class="container">
     <header>
-        <h1>WordFinder<span style="font-weight: 300; opacity: 0.8;">PRO</span></h1>
+        <h1>WordFinder<span style="font-weight: 300; opacity: 0.7;">PRO</span></h1>
         <div id="status" class="status-badge">
             <span class="loading-dot"></span>
-            Menginisialisasi Mesin...
+            Menghubungkan...
         </div>
-        <div id="progress-container"><div id="progress-bar"></div></div>
     </header>
 
     <div class="search-area">
-        <div class="input-box">
-            <span class="search-icon">🔍</span>
-            <input id="pola" placeholder="Cari kata atau gunakan pola (_ atau =)..." autocomplete="off">
-        </div>
+        <span class="search-icon">🔍</span>
+        <input id="pola" placeholder="Ketik pola..." autocomplete="off" inputmode="none">
     </div>
 
     <div class="stats-row">
-        <div id="counter-text">Menyiapkan database kata...</div>
+        <div id="counter-text">Siap mencari...</div>
         <div id="timer">0ms</div>
     </div>
 
     <div class="list-container" id="scrollWin">
         <ul id="hasil">
-            <div class="empty-state">
-                <p>💡 Gunakan <b>_</b> untuk satu huruf (misal: <code>a_u</code> → aku, abu)</p>
-                <p>💡 Gunakan <b>=</b> untuk banyak huruf (misal: <code>m=n</code> → makan, main)</p>
+            <div style="text-align: center; padding: 40px 10px; opacity: 0.5; font-size: 13px;">
+                Gunakan <b>_</b> (1 huruf) atau <b>=</b> (banyak huruf)
             </div>
         </ul>
     </div>
-<div class="virtual-keyboard" id="keyboard">
-    </div>
-    <div class="footer">ULTRA-FAST SEARCH ENGINE • 5-STREAM DATABASE</div>
+
+    <div class="virtual-keyboard" id="keyboard"></div>
+    <div class="footer">ULTRA-FAST SEARCH ENGINE</div>
 </div>
 
 <script>
@@ -320,187 +187,89 @@ html, body {
     let filtrasi = [];
     let displayCount = 40;
 
-    // Fungsi Utama: Load & Parse
+    const inputPola = document.getElementById("pola");
+    const keyboard = document.getElementById("keyboard");
+
     async function loadDatabase() {
         const status = document.getElementById("status");
-        const prog = document.getElementById("progress-bar");
-        const container = document.getElementById("progress-container");
         const files = ["kamus.txt", "kamus1.txt", "kamus2.txt", "kamus3.txt", "kamus4.txt", "kamus5.txt"];
-        
-        container.style.display = "block";
         let rawContent = "";
 
-        for (let i = 0; i < files.length; i++) {
+        for (let file of files) {
             try {
-                const res = await fetch(files[i]);
-                if (res.ok) {
-                    const text = await res.text();
-                    rawContent += " " + text;
-                }
-                let percent = ((i + 1) / files.length) * 100;
-                prog.style.width = percent + "%";
-            } catch (e) { console.log(`Skip: ${files[i]}`); }
+                const res = await fetch(file);
+                if (res.ok) rawContent += " " + await res.text();
+            } catch (e) {}
         }
 
-        // PARSING PER KATA (Bukan per baris)
-        // Menghapus simbol, memecah berdasarkan spasi/newline, dan filter kata valid
         masterKamus = [...new Set(
-            rawContent
-            .replace(/[.,\/#!$%\^&\*;:{}=\-_`~()?"']/g, " ")
-            .toLowerCase()
-            .split(/\s+/)
+            rawContent.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()?"']/g, " ")
+            .toLowerCase().split(/\s+/)
         )].filter(w => w.length > 1).sort();
 
-        status.innerHTML = `<span class="loading-dot" style="background:#00ff88"></span> ${masterKamus.length.toLocaleString()} Kata Terkoneksi`;
-        document.getElementById("counter-text").innerText = "Siap mencari...";
-        container.style.display = "none";
+        status.innerHTML = `<span class="loading-dot" style="background:#00ff88"></span> ${masterKamus.length.toLocaleString()} Kata Aktif`;
     }
 
     function render(append = false) {
         const ul = document.getElementById("hasil");
-        if (!append) {
-            ul.innerHTML = "";
-            displayCount = 40;
-        }
-
+        if (!append) { ul.innerHTML = ""; displayCount = 40; }
         const limit = Math.min(displayCount, filtrasi.length);
         const start = append ? displayCount - 40 : 0;
         
         const fragment = document.createDocumentFragment();
         for (let i = start; i < limit; i++) {
             const li = document.createElement("li");
-            li.style.animation = `fadeIn 0.4s ease forwards`;
-            li.innerHTML = `
-                <span class="word-text">${filtrasi[i]}</span>
-                <span class="word-len">${filtrasi[i].length} HURUF</span>
-            `;
+            li.innerHTML = `<span class="word-text">${filtrasi[i]}</span><span class="word-len">${filtrasi[i].length}L</span>`;
+            li.onclick = () => {
+                navigator.clipboard.writeText(filtrasi[i]);
+                vibrateDevice(50);
+            };
             fragment.appendChild(li);
         }
         ul.appendChild(fragment);
     }
 
     function search() {
-        const val = document.getElementById("pola").value.trim().toLowerCase();
-        const timer = document.getElementById("timer");
-        const countText = document.getElementById("counter-text");
-        
-        if (!val) {
-            filtrasi = [];
-            render();
-            countText.innerText = "Masukkan pola...";
-            return;
-        }
-
+        const val = inputPola.value.trim().toLowerCase();
         const t0 = performance.now();
-        
+        if (!val) { filtrasi = []; render(); return; }
+
         try {
-            // Logika Pola: _ jadi 1 huruf, = jadi banyak huruf
             let pattern = val.replace(/_/g, "[a-z]").replace(/=/g, ".*");
-            
-            // Jika user tidak pakai simbol, cari yang mengandung kata tersebut
-            let regex = (val.includes("_") || val.includes("=")) 
-                        ? new RegExp(`^${pattern}$`, "i") 
-                        : new RegExp(pattern, "i");
-
+            let regex = (val.includes("_") || val.includes("=")) ? new RegExp(`^${pattern}$`, "i") : new RegExp(pattern, "i");
             filtrasi = masterKamus.filter(k => regex.test(k));
-            
-            const t1 = performance.now();
-            timer.innerText = `${Math.round(t1 - t0)}ms`;
-            countText.innerHTML = `Ditemukan <b>${filtrasi.length.toLocaleString()}</b> hasil`;
-            
+            document.getElementById("timer").innerText = `${Math.round(performance.now() - t0)}ms`;
+            document.getElementById("counter-text").innerHTML = `<b>${filtrasi.length}</b> hasil`;
             render();
-        } catch (e) {
-            countText.innerText = "Pola tidak valid!";
-        }
+        } catch (e) {}
     }
 
-    // Scroll Load
+    // Keyboard Logic
+    const keys = [...'abcdefghijklmnopqrstuvwxyz'.split(''), {l:'_',v:'_'}, {l:'=',v:'='}, {l:'⌫',v:'DEL'}];
+    keys.forEach(k => {
+        const btn = document.createElement('button');
+        const isObj = typeof k === 'object';
+        btn.className = `key-btn ${isObj ? (k.v === 'DEL' ? 'danger' : 'special') : ''}`;
+        btn.innerText = isObj ? k.l : k;
+        btn.onclick = () => {
+            const val = isObj ? k.v : k;
+            if (val === 'DEL') inputPola.value = inputPola.value.slice(0, -1);
+            else inputPola.value += val;
+            vibrateDevice(15);
+            search();
+        };
+        keyboard.appendChild(btn);
+    });
+
+    function vibrateDevice(ms) { if (navigator.vibrate) navigator.vibrate(ms); }
+
     document.getElementById("scrollWin").onscroll = function() {
-        if (this.scrollTop + this.clientHeight >= this.scrollHeight - 50) {
-            if (displayCount < filtrasi.length) {
-                displayCount += 40;
-                render(true);
-            }
+        if (this.scrollTop + this.clientHeight >= this.scrollHeight - 20 && displayCount < filtrasi.length) {
+            displayCount += 40; render(true);
         }
     };
 
-    document.getElementById("pola").addEventListener("input", search);
-    
-    // Start!
     loadDatabase();
-    // Tambahkan fungsi debounce di dalam <script> kamu
-function debounce(func, timeout = 300) {
-    let timer;
-    return (...args) => {
-        clearTimeout(timer);
-        timer = setTimeout(() => { func.apply(this, args); }, timeout);
-    };
-}
-
-// Ganti event listener paling bawah dengan ini:
-const processSearch = debounce(() => search());
-document.getElementById("pola").addEventListener("input", processSearch);
-
-// Tambahkan getaran (Haptic Feedback) saat hasil ketemu
-function vibrateDevice() {
-    if ("vibrate" in navigator) {
-        navigator.vibrate(10); // Getar halus 10ms
-    }
-}
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('sw.js')
-    .then(() => console.log("PWA Ready!"))
-    .catch(err => console.log("SW Error:", err));
-}
-const keyboard = document.getElementById('keyboard');
-const inputPola = document.getElementById('pola');
-
-// Bersihkan keyboard sebelum render
-keyboard.innerHTML = '';
-
-// Susunan tombol A-Z
-const alphabet = 'abcdefghijklmnopqrstuvwxyz'.split('');
-alphabet.forEach(key => {
-    const btn = document.createElement('button');
-    btn.className = 'key-btn';
-    btn.innerText = key;
-    btn.onclick = () => addChar(key);
-    keyboard.appendChild(btn);
-});
-
-// Tombol Spesial
-const extras = [
-    { label: '_', val: '_', class: 'special' },
-    { label: '=', val: '=', class: 'special' },
-    { label: '⌫', val: 'DEL', class: 'danger' } // Pakai simbol backspace
-];
-
-extras.forEach(k => {
-    const btn = document.createElement('button');
-    btn.className = `key-btn ${k.class}`;
-    btn.innerText = k.label;
-    btn.onclick = () => (k.val === 'DEL') ? delChar() : addChar(k.val);
-    keyboard.appendChild(btn);
-});
-
-function addChar(char) {
-    inputPola.value += char;
-    vibrateDevice();
-    search(); // Langsung trigger search
-}
-
-function delChar() {
-    inputPola.value = inputPola.value.slice(0, -1);
-    vibrateDevice();
-    search();
-}
-
-// Matikan keyboard fisik di mobile agar tidak bentrok
-inputPola.setAttribute('inputmode', 'none');
- 
-inputPola.onclick = () => inputPola.focus();
-
 </script>
-
 </body>
 </html>
