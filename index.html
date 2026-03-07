@@ -1,275 +1,410 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#020617">
-    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/2800/2800015.png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>WordFinder Ultra Pro | Multi-Engine</title>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <title>WordFinder Compact</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #00f2fe;
-            --secondary: #4facfe;
-            --accent: #f093fb;
-            --danger: #ff4b2b;
-            --success: #00ff88;
-            --glass: rgba(15, 23, 42, 0.9);
-            --border: rgba(255, 255, 255, 0.1);
+            --bg-dark: #0f1115;
+            --surface: #1c1f26;
+            --text-main: #f1f5f9;
+            --text-muted: #94a3b8;
+            --accent: #3b82f6; /* Soft blue accent */
+            --accent-hover: #2563eb;
+            --border: #2e3440;
+            --key-bg: #282c36;
+            --key-press: #1e2128;
+            --danger: #ef4444;
         }
 
-        * { box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+        * { 
+            box-sizing: border-box; 
+            -webkit-tap-highlight-color: transparent; 
+            margin: 0; 
+            padding: 0;
+        }
 
-        html, body {
-            position: fixed;
+        body {
+            background-color: var(--bg-dark);
+            font-family: 'Inter', sans-serif;
+            color: var(--text-main);
+            height: 100vh;
+            height: 100dvh;
             overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .app-container {
             width: 100%;
+            max-width: 420px;
             height: 100%;
-            margin: 0;
-            background: #020617;
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            color: #f8fafc;
-            overscroll-behavior: none;
-        }
-
-        .bg-mesh {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            z-index: -1;
-            background: 
-                radial-gradient(at 0% 0%, rgba(79, 172, 254, 0.1) 0px, transparent 50%),
-                radial-gradient(at 100% 100%, rgba(240, 147, 251, 0.1) 0px, transparent 50%),
-                radial-gradient(at 50% 50%, rgba(15, 23, 42, 1) 0px, transparent 100%);
-        }
-
-        .container {
-            width: 95%;
-            max-width: 500px;
-            height: 96vh;
-            margin: 2vh auto;
-            background: var(--glass);
-            backdrop-filter: blur(40px) saturate(180%);
-            border: 1px solid var(--border);
-            border-radius: 28px;
-            padding: 20px;
+            background: var(--surface);
+            border-left: 1px solid var(--border);
+            border-right: 1px solid var(--border);
             display: flex;
             flex-direction: column;
-            box-shadow: 0 40px 80px -20px rgba(0,0,0,0.8);
-            animation: fadeIn 0.5s ease-out;
+            padding: 16px 12px;
+            position: relative;
         }
 
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-        header { text-align: center; margin-bottom: 15px; flex-shrink: 0; }
-        h1 { font-weight: 800; font-size: 2.2rem; margin: 0; background: linear-gradient(135deg, var(--primary), var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-
-        .status-badge { display: inline-flex; align-items: center; gap: 6px; background: rgba(255,255,255,0.03); padding: 4px 12px; border-radius: 100px; font-size: 11px; border: 1px solid var(--border); margin-top: 8px; }
-        .loading-dot { height: 6px; width: 6px; background: var(--success); border-radius: 50%; box-shadow: 0 0 8px var(--success); animation: blink 1s infinite; }
-        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
-
-        .search-area { position: relative; margin-bottom: 12px; flex-shrink: 0; }
-        input {
-            width: 100%;
-            padding: 15px 20px 15px 50px;
-            background: rgba(0,0,0,0.3);
-            border: 2px solid var(--border);
-            border-radius: 18px;
-            color: white;
-            font-size: 16px;
-            transition: 0.3s;
-        }
-        input:focus { outline: none; border-color: var(--primary); background: rgba(0,0,0,0.5); }
-        .search-icon { position: absolute; left: 18px; top: 50%; transform: translateY(-50%); opacity: 0.5; }
-
-        .list-container {
-            flex: 1;
-            overflow-y: auto;
-            border-radius: 18px;
-            background: rgba(0,0,0,0.2);
-            border: 1px solid var(--border);
-            padding: 10px;
-            margin-bottom: 12px;
-            touch-action: pan-y;
+        /* Header UI */
+        header { text-align: center; margin-bottom: 12px; }
+        h1 { 
+            font-size: 1.2rem; 
+            font-weight: 600;
+            letter-spacing: -0.5px;
+            color: var(--text-main);
         }
 
-        ul { list-style: none; padding: 0; margin: 0; }
-        li {
-            padding: 12px 15px;
-            margin-bottom: 6px;
-            background: rgba(255,255,255,0.03);
-            border-radius: 12px;
+        .status-bar {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border: 1px solid transparent;
-        }
-        li:active { background: rgba(255,255,255,0.1); transform: scale(0.98); }
-        .word-text { font-weight: 600; font-size: 1rem; color: #fff; }
-        .word-len { font-size: 9px; color: var(--accent); font-weight: 800; border: 1px solid var(--accent); padding: 1px 5px; border-radius: 4px; }
-
-        .virtual-keyboard {
-            display: grid;
-            grid-template-columns: repeat(10, 1fr);
-            gap: 4px;
-            padding: 8px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 18px;
-            flex-shrink: 0;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+            background: rgba(0,0,0,0.2);
+            padding: 6px 10px;
+            border-radius: 6px;
+            border: 1px solid var(--border);
         }
 
-        .key-btn {
-            padding: 12px 0;
+        /* Search Section */
+        .search-box { position: relative; margin-bottom: 12px; }
+        input {
+            width: 100%;
+            padding: 12px 40px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: var(--text-main);
+            font-size: 16px;
+            font-weight: 600;
+            font-family: 'JetBrains Mono', monospace;
+            text-align: center;
+            transition: border-color 0.2s;
+        }
+        input:focus, input:not(:placeholder-shown) { 
+            border-color: var(--accent); 
+            outline: none;
+        }
+        input::placeholder { color: #475569; font-weight: 400; }
+        
+        .icon-search { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); font-size: 14px; opacity: 0.5; }
+        .btn-clear { 
+            position: absolute; right: 10px; top: 50%; transform: translateY(-50%); 
+            background: transparent; border: none; 
+            color: var(--text-muted); cursor: pointer; 
+            width: 24px; height: 24px;
+            display: flex; justify-content: center; align-items: center;
+            font-size: 16px; transition: 0.2s;
+        }
+        .btn-clear:active { color: var(--danger); }
+
+        /* Result List */
+        .result-wrapper {
+            flex: 1;
+            overflow-y: auto;
+            margin-bottom: 12px;
+            padding-right: 4px;
+        }
+        .result-wrapper::-webkit-scrollbar { width: 4px; }
+        .result-wrapper::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+        ul { list-style: none; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        li {
+            background: rgba(255,255,255,0.03);
+            padding: 10px 12px;
             border-radius: 8px;
-            border: none;
-            background: rgba(255, 255, 255, 0.1);
-            color: white;
-            font-weight: 700;
-            font-size: 12px;
+            border: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             cursor: pointer;
-            text-transform: uppercase;
+            transition: background 0.1s;
         }
-        .key-btn:active { background: var(--primary); color: #000; transform: scale(0.9); }
-        .key-btn.special { background: rgba(240, 147, 251, 0.2); color: var(--accent); }
-        .key-btn.danger { background: rgba(255, 75, 43, 0.2); color: #ff4b2b; grid-column: span 2; }
+        li:active { background: rgba(59, 130, 246, 0.15); border-color: var(--accent); }
+        
+        .word { font-weight: 500; font-size: 0.9rem; }
+        .len { 
+            font-size: 9px; font-weight: 600; font-family: 'JetBrains Mono';
+            color: var(--text-muted); background: rgba(255,255,255,0.05); 
+            padding: 2px 6px; border-radius: 4px; 
+        }
 
-        .stats-row { display: flex; justify-content: space-between; font-size: 11px; color: #94a3b8; margin-bottom: 8px; padding: 0 5px; }
-        .footer { font-size: 9px; text-align: center; margin-top: 10px; opacity: 0.3; letter-spacing: 1px; }
+        /* Minimalist Keyboard UI */
+        .keyboard {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            background: transparent;
+        }
+        .kb-row { display: flex; justify-content: center; gap: 4px; touch-action: manipulation; }
+        .key {
+            flex: 1;
+            height: 42px;
+            max-width: 40px;
+            border-radius: 6px;
+            border: none;
+            background: var(--key-bg);
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            font-weight: 500;
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.1s, transform 0.1s;
+            user-select: none;
+        }
+        .key:active { background: var(--key-press); transform: scale(0.92); }
+        
+        .key.wide { max-width: 60px; flex: 1.5; font-size: 11px; font-weight: 600; }
+        .key.space { max-width: 120px; flex: 2; font-size: 11px; }
+        .key.special { background: rgba(59, 130, 246, 0.15); color: #60a5fa; }
+        .key.special:active { background: var(--accent); color: white; }
 
-        /* Media Query Khusus Layar Popup (Pendek) */
+        /* Toast Notification */
+        .toast {
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-20px);
+            background: var(--text-main);
+            color: var(--bg-dark);
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 12px;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.2s ease;
+            z-index: 100;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+        .toast.show { opacity: 1; visibility: visible; transform: translateX(-50%) translateY(0); }
+
+        .helper-text {
+            grid-column: 1/-1; text-align: center; padding: 30px 10px; 
+            color: var(--text-muted); font-size: 12px; line-height: 1.5;
+        }
+        .helper-text kbd {
+            background: var(--key-bg); padding: 2px 5px; border-radius: 4px; color: var(--text-main); font-family: monospace; border: 1px solid var(--border);
+        }
+
+        /* --- POPUP / SMALL SCREEN OPTIMIZATION --- */
         @media (max-height: 550px) {
-            .container { padding: 12px; height: 98vh; margin: 1vh auto; }
-            h1 { font-size: 1.4rem; }
-            .status-badge, .footer, .stats-row { display: none !important; }
-            .search-area { margin-bottom: 8px; }
-            input { padding: 10px 10px 10px 40px; font-size: 14px; }
-            .key-btn { padding: 8px 0; font-size: 11px; }
+            header { display: none; } /* Sembunyikan judul di layar pendek */
+            .app-container { padding: 8px 8px; border: none; }
+            .status-bar { margin-bottom: 8px; padding: 4px 8px; font-size: 9px; }
+            .search-box { margin-bottom: 8px; }
+            input { padding: 10px 30px; font-size: 15px; }
+            .key { height: 36px; font-size: 13px; border-radius: 4px; }
+            ul { gap: 6px; }
+            li { padding: 8px 10px; }
+            .helper-text { padding: 15px 5px; font-size: 11px; }
+        }
+
+        @media (max-width: 350px) {
+            .key { max-width: 32px; }
+            ul { grid-template-columns: 1fr; } /* Jadi 1 kolom jika layar sangat sempit */
         }
     </style>
 </head>
 <body>
 
-<div class="bg-mesh"></div>
+<div class="app-container">
+    <div class="toast" id="toast">Disalin!</div>
 
-<div class="container">
     <header>
-        <h1>WordFinder<span style="font-weight: 300; opacity: 0.7;">PRO</span></h1>
-        <div id="status" class="status-badge">
-            <span class="loading-dot"></span>
-            Menghubungkan...
-        </div>
+        <h1>WordFinder</h1>
     </header>
 
-    <div class="search-area">
-        <span class="search-icon">🔍</span>
-        <input id="pola" placeholder="Ketik pola..." autocomplete="off" inputmode="none">
+    <div class="status-bar">
+        <div id="db-status">Menghubungkan...</div>
+        <div id="stats" style="color: var(--text-main);">Ready</div>
     </div>
 
-    <div class="stats-row">
-        <div id="counter-text">Siap mencari...</div>
-        <div id="timer">0ms</div>
+    <div class="search-box">
+        <span class="icon-search">🔍</span>
+        <input type="text" id="pola" placeholder="Pola: a_u=" readonly>
+        <button class="btn-clear" onclick="clearInput()">✕</button>
     </div>
 
-    <div class="list-container" id="scrollWin">
+    <div class="result-wrapper" id="scrollWin">
         <ul id="hasil">
-            <div style="text-align: center; padding: 40px 10px; opacity: 0.5; font-size: 13px;">
-                Gunakan <b>_</b> (1 huruf) atau <b>=</b> (banyak huruf)
+            <div class="helper-text">
+                Masukkan pola kata.<br><br>
+                <kbd>_</kbd> = 1 huruf bebas<br>
+                <kbd>=</kbd> = banyak huruf bebas
             </div>
         </ul>
     </div>
 
-    <div class="virtual-keyboard" id="keyboard"></div>
-    <div class="footer">ULTRA-FAST SEARCH ENGINE</div>
+    <div class="keyboard">
+        <div class="kb-row" id="row1"></div>
+        <div class="kb-row" id="row2"></div>
+        <div class="kb-row" id="row3"></div>
+        <div class="kb-row" id="row4"></div>
+    </div>
 </div>
 
 <script>
     let masterKamus = [];
-    let filtrasi = [];
-    let displayCount = 40;
+    let filtered = [];
+    let itemsShown = 40;
 
     const inputPola = document.getElementById("pola");
-    const keyboard = document.getElementById("keyboard");
+    const hasilEl = document.getElementById("hasil");
+    const toastEl = document.getElementById("toast");
 
-    async function loadDatabase() {
-        const status = document.getElementById("status");
-        const files = ["kamus.txt", "kamus1.txt", "kamus2.txt", "kamus3.txt", "kamus4.txt", "kamus5.txt"];
-        let rawContent = "";
+    const layout = [
+        ['Q','W','E','R','T','Y','U','I','O','P'],
+        ['A','S','D','F','G','H','J','K','L'],
+        ['_','Z','X','C','V','B','N','M','='],
+        ['CLR', 'SPACE', 'DEL']
+    ];
 
-        for (let file of files) {
-            try {
-                const res = await fetch(file);
-                if (res.ok) rawContent += " " + await res.text();
-            } catch (e) {}
-        }
+    const mockDB = [
+        "aku", "kamu", "dia", "mereka", "kita", "kucing", "anjing", "burung", "ikan", 
+        "makan", "minum", "tidur", "lari", "jalan", "terbang", "berenang", "buku", "pena",
+        "meja", "kursi", "pintu", "jendela", "rumah", "sekolah", "pasar", "kantor",
+        "merah", "kuning", "hijau", "biru", "hitam", "putih", "besar", "kecil", "panjang"
+    ];
 
-        masterKamus = [...new Set(
-            rawContent.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()?"']/g, " ")
-            .toLowerCase().split(/\s+/)
-        )].filter(w => w.length > 1).sort();
-
-        status.innerHTML = `<span class="loading-dot" style="background:#00ff88"></span> ${masterKamus.length.toLocaleString()} Kata Aktif`;
+    function createKeyboard() {
+        layout.forEach((row, idx) => {
+            const container = document.getElementById(`row${idx+1}`);
+            row.forEach(key => {
+                const btn = document.createElement('button');
+                btn.className = 'key';
+                btn.innerText = key;
+                
+                if (key === 'DEL') {
+                    btn.classList.add('wide');
+                    btn.innerHTML = '⌫';
+                    btn.onclick = () => { inputPola.value = inputPola.value.slice(0,-1); handleSearch(); };
+                } else if (key === 'SPACE') {
+                    btn.classList.add('space');
+                    btn.innerHTML = 'SPACE';
+                    btn.onclick = () => { inputPola.value += ' '; handleSearch(); };
+                } else if (key === 'CLR') {
+                    btn.classList.add('wide');
+                    btn.onclick = clearInput;
+                } else if (key === '_' || key === '=') {
+                    btn.classList.add('special');
+                    btn.onclick = () => { inputPola.value += key; handleSearch(); };
+                } else {
+                    btn.onclick = () => { inputPola.value += key.toLowerCase(); handleSearch(); };
+                }
+                
+                btn.addEventListener('touchstart', () => { if(navigator.vibrate) navigator.vibrate(10); }, {passive: true});
+                container.appendChild(btn);
+            });
+        });
     }
 
-    function render(append = false) {
-        const ul = document.getElementById("hasil");
-        if (!append) { ul.innerHTML = ""; displayCount = 40; }
-        const limit = Math.min(displayCount, filtrasi.length);
-        const start = append ? displayCount - 40 : 0;
+    async function loadDB() {
+        const files = ["kamus.txt", "kamus1.txt", "kamus2.txt"]; 
+        let text = "";
+        let dbLoaded = false;
         
-        const fragment = document.createDocumentFragment();
-        for (let i = start; i < limit; i++) {
-            const li = document.createElement("li");
-            li.innerHTML = `<span class="word-text">${filtrasi[i]}</span><span class="word-len">${filtrasi[i].length}L</span>`;
-            li.onclick = () => {
-                navigator.clipboard.writeText(filtrasi[i]);
-                vibrateDevice(50);
-            };
-            fragment.appendChild(li);
+        for(let f of files) {
+            try {
+                const r = await fetch(f);
+                if(r.ok) { text += " " + await r.text(); dbLoaded = true; }
+            } catch(e) {}
         }
-        ul.appendChild(fragment);
+
+        if (!dbLoaded || text.trim() === "") {
+            text = mockDB.join(" ");
+            document.getElementById("db-status").innerText = "DB: Fallback Mode";
+        } else {
+            document.getElementById("db-status").innerText = "DB: Online";
+        }
+
+        masterKamus = [...new Set(text.replace(/[^a-zA-Z\s]/g, " ").toLowerCase().split(/\s+/))].filter(w => w.length > 1).sort();
+        document.getElementById("db-status").innerText = `DB: ${masterKamus.length.toLocaleString()} Kata`;
     }
 
-    function search() {
+    function handleSearch() {
         const val = inputPola.value.trim().toLowerCase();
-        const t0 = performance.now();
-        if (!val) { filtrasi = []; render(); return; }
+        if(!val) { 
+            filtered = []; 
+            hasilEl.innerHTML = `
+                <div class="helper-text">
+                    Masukkan pola kata.<br><br>
+                    <kbd>_</kbd> = 1 huruf bebas<br>
+                    <kbd>=</kbd> = banyak huruf bebas
+                </div>`;
+            document.getElementById("stats").innerText = "Ready";
+            return; 
+        }
 
+        const t0 = performance.now();
         try {
-            let pattern = val.replace(/_/g, "[a-z]").replace(/=/g, ".*");
-            let regex = (val.includes("_") || val.includes("=")) ? new RegExp(`^${pattern}$`, "i") : new RegExp(pattern, "i");
-            filtrasi = masterKamus.filter(k => regex.test(k));
-            document.getElementById("timer").innerText = `${Math.round(performance.now() - t0)}ms`;
-            document.getElementById("counter-text").innerHTML = `<b>${filtrasi.length}</b> hasil`;
-            render();
-        } catch (e) {}
+            const regexStr = "^" + val.replace(/_/g, "[a-z]").replace(/=/g, ".*") + "$";
+            const isPlain = !val.includes("_") && !val.includes("=");
+            const regex = isPlain ? new RegExp(val, "i") : new RegExp(regexStr, "i");
+            
+            filtered = masterKamus.filter(w => regex.test(w));
+            const time = Math.round(performance.now() - t0);
+            document.getElementById("stats").innerText = `Ditemukan: ${filtered.length} (${time}ms)`;
+            renderList();
+        } catch(e) {
+            document.getElementById("stats").innerText = "Format Salah!";
+        }
     }
 
-    // Keyboard Logic
-    const keys = [...'abcdefghijklmnopqrstuvwxyz'.split(''), {l:'_',v:'_'}, {l:'=',v:'='}, {l:'⌫',v:'DEL'}];
-    keys.forEach(k => {
-        const btn = document.createElement('button');
-        const isObj = typeof k === 'object';
-        btn.className = `key-btn ${isObj ? (k.v === 'DEL' ? 'danger' : 'special') : ''}`;
-        btn.innerText = isObj ? k.l : k;
-        btn.onclick = () => {
-            const val = isObj ? k.v : k;
-            if (val === 'DEL') inputPola.value = inputPola.value.slice(0, -1);
-            else inputPola.value += val;
-            vibrateDevice(15);
-            search();
-        };
-        keyboard.appendChild(btn);
-    });
+    function renderList(append = false) {
+        if(!append) { hasilEl.innerHTML = ""; itemsShown = 40; }
+        const chunk = filtered.slice(itemsShown - 40, itemsShown);
+        
+        if(chunk.length === 0 && !append) {
+            hasilEl.innerHTML = `<div class="helper-text" style="color: var(--danger);">Tidak ada hasil.</div>`;
+            return;
+        }
 
-    function vibrateDevice(ms) { if (navigator.vibrate) navigator.vibrate(ms); }
+        chunk.forEach((word) => {
+            const li = document.createElement("li");
+            li.innerHTML = `<span class="word">${word}</span><span class="len">${word.length}</span>`;
+            li.onclick = () => copyToClipboard(word);
+            hasilEl.appendChild(li);
+        });
+    }
+
+    function copyToClipboard(word) {
+        navigator.clipboard.writeText(word);
+        if(navigator.vibrate) navigator.vibrate(15); 
+        toastEl.innerText = `"${word}" disalin!`;
+        toastEl.classList.add("show");
+        setTimeout(() => toastEl.classList.remove("show"), 1500);
+    }
+
+    function clearInput() {
+        inputPola.value = "";
+        if(navigator.vibrate) navigator.vibrate(15);
+        handleSearch();
+    }
 
     document.getElementById("scrollWin").onscroll = function() {
-        if (this.scrollTop + this.clientHeight >= this.scrollHeight - 20 && displayCount < filtrasi.length) {
-            displayCount += 40; render(true);
+        if(this.scrollTop + this.clientHeight >= this.scrollHeight - 50) {
+            if(itemsShown < filtered.length) {
+                itemsShown += 40;
+                renderList(true);
+            }
         }
     };
 
-    loadDatabase();
+    createKeyboard();
+    loadDB();
 </script>
+
 </body>
 </html>
