@@ -1,16 +1,18 @@
 {
+  "name": "WordFinder Compact",
   "short_name": "WordFinder",
-  "name": "WordFinder Ultra Pro",
+  "description": "Pencari kata minimalis dengan dukungan regex.",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#0f1115",
+  "theme_color": "#3b82f6",
+  "orientation": "portrait",
   "icons": [
     {
-      "src": "https://cdn-icons-png.flaticon.com/512/2800/2800015.png",
+      "src": "https://cdn-icons-png.flaticon.com/512/1055/1055644.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
     }
-  ],
-  "start_url": ".",
-  "display": "standalone",
-  "theme_color": "#020617",
-  "background_color": "#020617"
+  ]
 }
